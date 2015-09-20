@@ -1,5 +1,7 @@
 # particlemap
 
+Particle map based on the ELK stack
+
 ## setup
 
     pip install elasticsearch
@@ -18,5 +20,4 @@ Import data
     
     python particle_import.py
     
-Kibana
-http://localhost:5601
+Dashoard http://localhost:5601
