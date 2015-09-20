@@ -17,3 +17,6 @@ Start the container (see:  http://spujadas.github.io/elk-docker/#installation)
 Import data
     
     python particle_import.py
+    
+Kibana
+http://localhost:5601
