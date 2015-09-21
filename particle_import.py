@@ -1,11 +1,11 @@
 import csv
-import hashlib
+import dateutil.parser
 from elasticsearch import Elasticsearch
 es = Elasticsearch()
 
 FILE = 'rawdata/particledata.csv'
 LIMIT = 1000000
-INDEX = 'particles-test-index'
+INDEX = 'particles-test'
 DOC = 'measure'
 
 def getCoords(id):
@@ -38,14 +38,12 @@ def createIndex():
         body={
           DOC: {
             'properties': {
-                #'time': {'type': 'date'},
-                'coords': {'type': 'geo_point'},
-                #'P10': {'type': 'float'},
-                #'P25': {'type': 'float'},
-                #'durP10': {'type': 'integer'},
-                #'durP25': {'type': 'integer'},
-                #'ratioP10': {'type': 'float'},
-                #'ratioP25': {'type': 'float'}
+                'time': {
+                    'type': 'date',
+                    #'fomat': "yyyy-MM-dd kk:mm:ss.SSSSSSZ"
+                    'format': "Y-m-d'T'HH:mm:ss"
+                },
+                'coords': {'type': 'geo_point'}
             }
           }
         }
@@ -54,11 +52,7 @@ def createIndex():
 
 
 def publish(data):
-    m = hashlib.md5()
-    m.update(data['time'] + data['type'])
-    id = m.hexdigest()
-    res = es.index(index=INDEX, doc_type=DOC, id=id, body=data)
-    print(res['created'])
+    res = es.index(index=INDEX, doc_type=DOC, body=data)
 
 
 def walkData():
@@ -66,39 +60,41 @@ def walkData():
         reader = csv.reader(f)
         cnt = 0
         for row in reader:
-            data = {
-                'time': row[0],
-                'type': row[1],
-                'indoor': row[2],
-                'location_id': row[3],
-                'sampling_rate': row[4],
-                'P1': row[5],
-                'P2': row[6],
-                'durP1': row[7],
-                'durP2': row[8],
-                'ratioP1': row[9],
-                'ratioP2': row[10],
-                'temperature': row[11],
-                'humidity': row[12],
-                'pressure': row[13],
-                'altitude': row[14],
-                'pressure_sealevel': row[15],
-                'brightness': row[16],
-                'dust_density': row[17],
-                'vo_raw': row[18],
-                'voltage': row[19],
-                'P10': row[20],
-                'P25': row[21],
-                'durP10': row[22],
-                'durP25': row[23],
-                'ratioP10': row[24],
-                'ratioP25': row[25]
-            }
-
-            data['coords'] = getCoords(data['location_id'])
-
-            #print data, "\n"
-            publish(data)
+            time = dateutil.parser.parse(row[0])
+            iso_time = time.strftime("%Y-%m-%dT%H:%M:%S")
+            try:
+                data = {
+                    'time': iso_time,
+                    'type': row[1],
+                    'indoor': row[2],
+                    'location_id': row[3],
+                    'sampling_rate': int(row[4]),
+                    'P1': row[5],
+                    'P2': row[6],
+                    'durP1': row[7],
+                    'durP2': row[8],
+                    'ratioP1': row[9],
+                    'ratioP2': row[10],
+                    'temperature': row[11],
+                    'humidity': row[12],
+                    'pressure': row[13],
+                    'altitude': row[14],
+                    'pressure_sealevel': row[15],
+                    'brightness': row[16],
+                    'dust_density': row[17],
+                    'vo_raw': row[18],
+                    'voltage': row[19],
+                    'P10': row[20],
+                    'P25': row[21],
+                    'durP10': row[22],
+                    'durP25': row[23],
+                    'ratioP10': row[24],
+                    'ratioP25': row[25]
+                }
+                data['coords'] = getCoords(data['location_id'])
+                publish(data)
+            except ValueError as e:
+                print "skip line %s %s" % (cnt, e.message)
 
             cnt += 1
             if (cnt >= LIMIT):
