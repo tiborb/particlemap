@@ -8,8 +8,10 @@ BEGIN{
     cnt=0;
     }
 {
-    print "{ \"type\": \"Feature\", \"geometry\": {\"type\": \"Point\", \"coordinates\": ["$1/divisor", "$2/divisor"]}, \"properties\": {\"name\": \"" $3 "\"} }, "
+    cnt=cnt+1
+    if (cnt > 1){print ","}
+    print "{ \"type\": \"Feature\", \"geometry\": {\"type\": \"Point\", \"coordinates\": ["$1/divisor", "$2/divisor"]}, \"properties\": {\"name\": \"" $3 "\"} } "
 }
 END{  
-       print "{} ] }"
+       print " ] }"
 }
