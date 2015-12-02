@@ -1,23 +1,9 @@
 function layers() {
-
-    var count = 300;
-    var features = [];
-    for (var i = 0; i < count; ++i) {
-        var coordinates = getRandomLocation(48.775846, 9.182932, 3000);
-        console.log(coordinates);
-        //ol.proj.fromLonLat([16.3725, 48.208889])
-        features.push(new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(coordinates))));
-    }
-
+    
     var source = new ol.source.Vector({
-        features: features
+        url: 'grid01.json',
+        format: new ol.format.GeoJSON()
     });
-
-
-//var source = new ol.source.GeoJSON({
-//    projection: 'EPSG:4326',
-//    url: 'mygeojson.json'
-//});
 
     var clusterSource = new ol.source.Cluster({
         distance: 40,
