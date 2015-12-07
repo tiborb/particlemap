@@ -1,0 +1,20 @@
+{
+  "name": "partice map",
+  "version": "0.1.0",
+  "homepage": "https://github.com/tiborb/particlemap",
+  "authors": [
+    "tiborb <tiborb>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

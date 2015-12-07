@@ -1,7 +1,7 @@
 function layers() {
     
     var source = new ol.source.Vector({
-        url: 'grid01.json',
+        url: 'data/grid01.json',
         format: new ol.format.GeoJSON()
     });
 
